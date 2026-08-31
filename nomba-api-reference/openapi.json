@@ -15026,7 +15026,7 @@
                         },
                         "gatewayMessage": {
                           "type": "string",
-                          "example": "Awaiting the customer's approval on their mobile money app",
+                          "example": "Awaiting customer approval",
                           "description": "Human-readable form of gatewayCode. Wording may change; do not parse it."
                         }
                       }
