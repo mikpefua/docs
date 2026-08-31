@@ -56,3 +56,40 @@ If you want a hosted payment experience instead of a direct collection API, use 
     Use the FetchMobileMoneyTransaction endpoint with the returned transaction reference to confirm the final status of the collection.
   </Step>
 </Steps>
+
+## Reading the outcome
+
+Every collection is initiated as `PENDING` and settles asynchronously, because the customer still has
+to approve the charge on their phone. Two fields tell you where a collection stands.
+
+<ResponseField name="status" type="string">
+  The lifecycle state. `PENDING` and `APPROVED` are both still in flight; only `SUCCESS` and `FAILED`
+  are final.
+</ResponseField>
+
+<ResponseField name="gatewayCode" type="string">
+  A stable, machine-readable outcome — `AWAITING_CUSTOMER_APPROVAL`, `CREDIT_IN_PROGRESS`,
+  `PAYMENT_RECEIVED`, `WRONG_MOBILE_MONEY_NETWORK`, `TEMPORARILY_UNAVAILABLE`, `PAYMENT_DECLINED` or
+  `STATUS_UNAVAILABLE`. Branch on this. The accompanying `gatewayMessage` is for humans and its
+  wording may change, so do not parse it.
+</ResponseField>
+
+<Warning>
+  **`APPROVED` does not mean you have been paid.** It means the customer approved the charge on their
+  phone and the credit is still settling. Wait for `SUCCESS` before releasing goods or services.
+</Warning>
+
+A few outcomes are worth handling explicitly:
+
+- **`WRONG_MOBILE_MONEY_NETWORK`** — the phone number is not registered on the `topupVendor` you
+  chose. Only you can fix this: send the number on the network it actually belongs to. Call
+  [Fetch Inflow Providers](/docs/products/global-collections/fetch-drc-inflow-providers) for the
+  valid values.
+- **`TEMPORARILY_UNAVAILABLE`** — the payment could not be attempted. Retry later with a **new**
+  `idempotencyKey`.
+- **`PAYMENT_DECLINED`** — the charge was not completed. The mobile money providers do not return a
+  reason for most declines; in practice the usual cause is an unfunded customer wallet, and the
+  customer is prompted for the amount **plus the provider's fee**, not the amount alone.
+
+See [Fetch Transaction](/docs/products/global-collections/fetch-mobile-money-transaction) for the
+full field reference.

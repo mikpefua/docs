@@ -14987,13 +14987,15 @@
                         },
                         "status": {
                           "type": "string",
-                          "example": "APPROVED",
+                          "example": "PENDING",
                           "enum": [
                             "PENDING",
                             "APPROVED",
+                            "SUCCESS",
                             "FAILED",
-                            "CANCELLED"
-                          ]
+                            "PENDING_APPROVAL"
+                          ],
+                          "description": "Current status of the collection. APPROVED is not terminal - the customer approved the charge but the credit is still settling. Only SUCCESS is a settled payment."
                         },
                         "amount": {
                           "type": "number",
@@ -15002,6 +15004,30 @@
                         "currency": {
                           "type": "string",
                           "example": "CDF"
+                        },
+                        "vendor": {
+                          "type": "string",
+                          "example": "MPESA",
+                          "description": "The mobile money network the collection was requested on, echoing the topupVendor sent."
+                        },
+                        "gatewayCode": {
+                          "type": "string",
+                          "example": "AWAITING_CUSTOMER_APPROVAL",
+                          "enum": [
+                            "AWAITING_CUSTOMER_APPROVAL",
+                            "CREDIT_IN_PROGRESS",
+                            "PAYMENT_RECEIVED",
+                            "WRONG_MOBILE_MONEY_NETWORK",
+                            "TEMPORARILY_UNAVAILABLE",
+                            "PAYMENT_DECLINED",
+                            "STATUS_UNAVAILABLE"
+                          ],
+                          "description": "Stable machine-readable outcome. Branch on this rather than on gatewayMessage."
+                        },
+                        "gatewayMessage": {
+                          "type": "string",
+                          "example": "Awaiting the customer's approval on their mobile money app",
+                          "description": "Human-readable form of gatewayCode. Wording may change; do not parse it."
                         }
                       }
                     }
