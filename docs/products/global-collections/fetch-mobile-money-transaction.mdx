@@ -70,7 +70,12 @@ curl --request GET \
   | `APPROVED` | No | The customer approved the payment, but the credit has not landed yet. Keep polling. |
   | `SUCCESS` | Yes | The payment is complete and the funds have been credited. |
   | `FAILED` | Yes | The collection could not be completed. |
-  | `PENDING_APPROVAL` | No | The provider never returned an outcome within the polling window. Rare; contact support with the `transactionId`. |
+  | `PENDING_APPROVAL` | No | The mobile money provider never returned an outcome within the polling window, so the collection is unresolved rather than failed. It can still settle on a late provider callback. Do not fulfil the order; contact support with the `transactionId` if you need it closed out. |
+
+  <Warning>
+    `PENDING_APPROVAL` is not unusual — it accounts for roughly one in seven collections — so handle
+    it explicitly rather than treating it as an edge case.
+  </Warning>
 
   <Warning>
     `APPROVED` is **not** a completed collection. It means the customer approved the charge on their
