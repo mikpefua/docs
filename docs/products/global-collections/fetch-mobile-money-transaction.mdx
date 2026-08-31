@@ -101,7 +101,7 @@ curl --request GET \
   | `CREDIT_IN_PROGRESS` | The customer approved; the credit is still settling. | Keep polling until `SUCCESS`. |
   | `PAYMENT_RECEIVED` | The collection settled. | Fulfil the order. |
   | `WRONG_MOBILE_MONEY_NETWORK` | The phone number is not registered on the `topupVendor` you selected. | Fix the network for that number and retry. Call [Fetch Inflow Providers](/docs/products/global-collections/fetch-drc-inflow-providers) for valid values. |
-  | `TEMPORARILY_UNAVAILABLE` | The payment could not be attempted right now. | Retry later with a **new** `idempotencyKey`. |
+  | `TEMPORARILY_UNAVAILABLE` | The payment was never attempted — nothing was charged and the customer saw no prompt. | Retry later with a **new** `idempotencyKey`. Do not treat it as a decline. |
   | `PAYMENT_DECLINED` | The payment was not completed. The provider gives no reason for most declines; the common cause is an unfunded customer wallet. | Ask the customer to fund their wallet and retry. |
   | `STATUS_UNAVAILABLE` | The outcome could not be determined. | Contact support with the `transactionId`. |
 </ResponseField>

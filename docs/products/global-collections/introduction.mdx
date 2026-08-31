@@ -85,8 +85,9 @@ A few outcomes are worth handling explicitly:
   chose. Only you can fix this: send the number on the network it actually belongs to. Call
   [Fetch Inflow Providers](/docs/products/global-collections/fetch-drc-inflow-providers) for the
   valid values.
-- **`TEMPORARILY_UNAVAILABLE`** — the payment could not be attempted. Retry later with a **new**
-  `idempotencyKey`.
+- **`TEMPORARILY_UNAVAILABLE`** — the payment was never attempted, so nothing was charged and your
+  customer saw no prompt. Retry later with a **new** `idempotencyKey`. This is the second most common
+  failure outcome, so handle it as a retry rather than a lost sale.
 - **`PAYMENT_DECLINED`** — the charge was not completed. The mobile money providers do not return a
   reason for most declines; in practice the usual cause is an unfunded customer wallet, and the
   customer is prompted for the amount **plus the provider's fee**, not the amount alone.
