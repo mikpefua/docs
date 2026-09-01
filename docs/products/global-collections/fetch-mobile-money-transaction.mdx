@@ -67,7 +67,7 @@ curl --request GET \
   | Value | Terminal | Description |
   |---|---|---|
   | `PENDING` | No | Payment prompt sent; awaiting the customer's approval on their phone. |
-  | `APPROVED` | No | The customer approved the payment, but the credit has not landed yet. Keep polling. |
+  | `APPROVED` | No | The provider approved the charge, but the funds have not been credited to your Nomba account yet. Keep polling. |
   | `SUCCESS` | Yes | The payment is complete and the funds have been credited. |
   | `FAILED` | Yes | The collection could not be completed. |
   | `PENDING_APPROVAL` | No | The mobile money provider never returned an outcome within the polling window, so the collection is unresolved rather than failed. It can still settle on a late provider callback. Do not fulfil the order; contact support with the `transactionId` if you need it closed out. |
@@ -103,8 +103,8 @@ curl --request GET \
   | Value | Meaning | What to do |
   |---|---|---|
   | `AWAITING_CUSTOMER_APPROVAL` | The prompt has been sent and the customer has not approved it yet. | Keep polling, or wait for the webhook. |
-  | `CREDIT_IN_PROGRESS` | The customer approved; the credit is still settling. | Keep polling until `SUCCESS`. |
-  | `PAYMENT_RECEIVED` | The collection settled. | Fulfil the order. |
+  | `CREDIT_IN_PROGRESS` | The provider approved the charge; the funds are not in your account yet. | Keep polling until `SUCCESS`. |
+  | `PAYMENT_RECEIVED` | The collection settled and the funds are in your Nomba account. | Fulfil the order. |
   | `WRONG_MOBILE_MONEY_NETWORK` | The phone number is not registered on the `topupVendor` you selected. | Fix the network for that number and retry. Call [Fetch Inflow Providers](/docs/products/global-collections/fetch-drc-inflow-providers) for valid values. |
   | `TEMPORARILY_UNAVAILABLE` | The payment was never attempted — nothing was charged and the customer saw no prompt. | Retry later with a **new** `idempotencyKey`. Do not treat it as a decline. |
   | `PAYMENT_DECLINED` | The payment was not completed. The provider gives no reason for most declines; the common cause is an unfunded customer wallet. | Ask the customer to fund their wallet and retry. |
