@@ -58,10 +58,10 @@ A rejected initiation returns a non-`00` code with one of these descriptions.
 | Description | Meaning | What to do |
 |---|---|---|
 | `The phone number is not registered on <NETWORK>` | The number is not on the `topupVendor` you sent. | Send it on the network it belongs to. [Fetch Inflow Providers](/docs/products/global-collections/fetch-drc-inflow-providers) lists the valid values. |
-| `Failed to initiate mobile money inflow` | The provider rejected the request for another reason. | Check the request, then retry with a **new** `idempotencyKey`. |
-| `Please retry later or contact support` | The collection service was unreachable. Nothing was charged. | Retry later with a **new** `idempotencyKey`. |
+| `Failed to initiate mobile money inflow` | The request was rejected for another reason. | Check the request, then retry with a **new** `idempotencyKey`. |
+| `Please retry later or contact support` | The collection could not be attempted. Nothing was charged. | Retry later with a **new** `idempotencyKey`. |
 
-Provider wording is not passed through, so treat these descriptions as the contract rather than parsing anything else.
+Treat these descriptions as the contract; do not parse anything else out of the response.
 
 #### Request body
 
