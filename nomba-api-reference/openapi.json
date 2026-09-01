@@ -15005,11 +15005,6 @@
                           "type": "string",
                           "example": "CDF"
                         },
-                        "provider": {
-                          "type": "string",
-                          "example": "ProxyPay",
-                          "description": "The provider the collection was routed through."
-                        },
                         "vendor": {
                           "type": "string",
                           "example": "MPESA",
