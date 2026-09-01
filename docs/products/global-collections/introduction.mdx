@@ -57,40 +57,23 @@ If you want a hosted payment experience instead of a direct collection API, use 
   </Step>
 </Steps>
 
+
 ## Reading the outcome
 
-Every collection is initiated as `PENDING` and settles asynchronously, because the customer still has
-to approve the charge on their phone. Two fields tell you where a collection stands.
+A collection is initiated as `PENDING` and settles asynchronously, because the customer still has to
+approve the charge on their phone. Two fields tell you where it stands.
 
-<ResponseField name="status" type="string">
-  The lifecycle state. `PENDING` and `APPROVED` are both still in flight; only `SUCCESS` and `FAILED`
-  are final.
-</ResponseField>
+`gatewayMessage` is the provider's own word. `gatewayCode` says what it means:
 
-<ResponseField name="gatewayCode" type="string">
-  A stable, machine-readable outcome — `AWAITING_CUSTOMER_APPROVAL`, `CREDIT_IN_PROGRESS`,
-  `PAYMENT_RECEIVED`, `WRONG_MOBILE_MONEY_NETWORK`, `TEMPORARILY_UNAVAILABLE`, `PAYMENT_DECLINED` or
-  `STATUS_UNAVAILABLE`. Branch on this. The accompanying `gatewayMessage` is for humans and its
-  wording may change, so do not parse it.
-</ResponseField>
+| `gatewayMessage` | `gatewayCode` |
+|---|---|
+| `ACCEPTED` | Awaiting customer approval |
+| `APPROVED` | Merchant credited |
+| `DECLINED` | Payment declined |
 
-<Warning>
-  **`APPROVED` does not mean you have been paid.** It means the customer approved the charge on their
-  phone and the credit is still settling. Wait for `SUCCESS` before releasing goods or services.
-</Warning>
-
-A few outcomes are worth handling explicitly:
-
-- **`WRONG_MOBILE_MONEY_NETWORK`** — the phone number is not registered on the `topupVendor` you
-  chose. Only you can fix this: send the number on the network it actually belongs to. Call
-  [Fetch Inflow Providers](/docs/products/global-collections/fetch-drc-inflow-providers) for the
-  valid values.
-- **`TEMPORARILY_UNAVAILABLE`** — the payment was never attempted, so nothing was charged and your
-  customer saw no prompt. Retry later with a **new** `idempotencyKey`. This is the second most common
-  failure outcome, so handle it as a retry rather than a lost sale.
-- **`PAYMENT_DECLINED`** — the charge was not completed. The mobile money providers do not return a
-  reason for most declines; in practice the usual cause is an unfunded customer wallet, and the
-  customer is prompted for the amount **plus the provider's fee**, not the amount alone.
+The providers do not give a reason for a decline. In practice the usual cause is an unfunded
+customer wallet, and the customer is prompted for the amount **plus the provider's fee**, not the
+amount alone -- so retrying at the same amount often declines again.
 
 See [Fetch Transaction](/docs/products/global-collections/fetch-mobile-money-transaction) for the
 full field reference.

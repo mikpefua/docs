@@ -30,12 +30,13 @@ curl --request GET \
     "transactionId": "a822e327-4bcd-40ec-ac61-ed3622eac000",
     "coreUserId": "xxxx-xxxx-4402-97c0-6c3824cxxxxx",
     "account": "0980802918",
-    "status": "PENDING",
+    "status": "SUCCESS",
     "amount": 10.00,
     "currency": "CDF",
+    "provider": "ProxyPay",
     "vendor": "MPESA",
-    "gatewayCode": "AWAITING_CUSTOMER_APPROVAL",
-    "gatewayMessage": "Awaiting customer approval"
+    "gatewayMessage": "APPROVED",
+    "gatewayCode": "Merchant credited"
   }
 }
 ```
@@ -64,24 +65,13 @@ curl --request GET \
 <ResponseField name="status" type="string" required>
   Current status of the collection.
 
-  | Value | Terminal | Description |
-  |---|---|---|
-  | `PENDING` | No | Payment prompt sent; awaiting the customer's approval on their phone. |
-  | `APPROVED` | No | The provider approved the charge, but the funds have not been credited to your Nomba account yet. Keep polling. |
-  | `SUCCESS` | Yes | The payment is complete and the funds have been credited. |
-  | `FAILED` | Yes | The collection could not be completed. |
-  | `PENDING_APPROVAL` | No | The mobile money provider never returned an outcome within the polling window, so the collection is unresolved rather than failed. It can still settle on a late provider callback. Do not fulfil the order; contact support with the `transactionId` if you need it closed out. |
-
-  <Warning>
-    `PENDING_APPROVAL` is not unusual — it accounts for roughly one in seven collections — so handle
-    it explicitly rather than treating it as an edge case.
-  </Warning>
-
-  <Warning>
-    `APPROVED` is **not** a completed collection. It means the customer approved the charge on their
-    phone; the funds are still being credited. Only `SUCCESS` is a settled payment. Do not release
-    goods or services on `APPROVED`.
-  </Warning>
+  | Value | Description |
+  |---|---|
+  | `PENDING` | Payment prompt sent; awaiting the customer's action. |
+  | `APPROVED` | The provider approved the charge. |
+  | `SUCCESS` | The collection completed. |
+  | `FAILED` | The collection did not complete. |
+  | `PENDING_APPROVAL` | The provider returned no outcome within the polling window, so the collection is unresolved. It can still settle on a late provider callback. |
 </ResponseField>
 
 <ResponseField name="amount" type="number" required>
@@ -96,21 +86,18 @@ curl --request GET \
   The mobile money network the collection was requested on, echoing the `topupVendor` you sent.
 </ResponseField>
 
-<ResponseField name="gatewayCode" type="string">
-  A stable, machine-readable outcome. **Branch on this**, not on `gatewayMessage` -- the message
-  wording may change, the code will not.
-
-  | Value | Meaning | What to do |
-  |---|---|---|
-  | `AWAITING_CUSTOMER_APPROVAL` | The prompt has been sent and the customer has not approved it yet. | Keep polling, or wait for the webhook. |
-  | `CREDIT_IN_PROGRESS` | The provider approved the charge; the funds are not in your account yet. | Keep polling until `SUCCESS`. |
-  | `PAYMENT_RECEIVED` | The collection settled and the funds are in your Nomba account. | Fulfil the order. |
-  | `WRONG_MOBILE_MONEY_NETWORK` | The phone number is not registered on the `topupVendor` you selected. | Fix the network for that number and retry. Call [Fetch Inflow Providers](/docs/products/global-collections/fetch-drc-inflow-providers) for valid values. |
-  | `TEMPORARILY_UNAVAILABLE` | The payment was never attempted — nothing was charged and the customer saw no prompt. | Retry later with a **new** `idempotencyKey`. Do not treat it as a decline. |
-  | `PAYMENT_DECLINED` | The payment was not completed. The provider gives no reason for most declines; the common cause is an unfunded customer wallet. | Ask the customer to fund their wallet and retry. |
-  | `STATUS_UNAVAILABLE` | The outcome could not be determined. | Contact support with the `transactionId`. |
+<ResponseField name="gatewayMessage" type="string">
+  The provider's own response word, passed through unchanged.
 </ResponseField>
 
-<ResponseField name="gatewayMessage" type="string">
-  A human-readable version of `gatewayCode`, safe to show to an operator. Do not parse it.
+<ResponseField name="gatewayCode" type="string">
+  What that word means, in plain words.
+
+  | `gatewayMessage` | `gatewayCode` |
+  |---|---|
+  | `ACCEPTED` | Awaiting customer approval |
+  | `APPROVED` | Merchant credited |
+  | `DECLINED` | Payment declined |
+
+  Those are the three words the providers write. Anything else leaves `gatewayCode` null.
 </ResponseField>

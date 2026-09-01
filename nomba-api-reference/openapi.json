@@ -14995,7 +14995,7 @@
                             "FAILED",
                             "PENDING_APPROVAL"
                           ],
-                          "description": "Current status of the collection. APPROVED is not terminal - the customer approved the charge but the credit is still settling. Only SUCCESS is a settled payment."
+                          "description": "Current status of the collection. PENDING_APPROVAL means the provider returned no outcome within the polling window and the collection is unresolved."
                         },
                         "amount": {
                           "type": "number",
@@ -15005,29 +15005,25 @@
                           "type": "string",
                           "example": "CDF"
                         },
+                        "provider": {
+                          "type": "string",
+                          "example": "ProxyPay",
+                          "description": "The provider the collection was routed through."
+                        },
                         "vendor": {
                           "type": "string",
                           "example": "MPESA",
                           "description": "The mobile money network the collection was requested on, echoing the topupVendor sent."
                         },
-                        "gatewayCode": {
-                          "type": "string",
-                          "example": "AWAITING_CUSTOMER_APPROVAL",
-                          "enum": [
-                            "AWAITING_CUSTOMER_APPROVAL",
-                            "CREDIT_IN_PROGRESS",
-                            "PAYMENT_RECEIVED",
-                            "WRONG_MOBILE_MONEY_NETWORK",
-                            "TEMPORARILY_UNAVAILABLE",
-                            "PAYMENT_DECLINED",
-                            "STATUS_UNAVAILABLE"
-                          ],
-                          "description": "Stable machine-readable outcome. Branch on this rather than on gatewayMessage."
-                        },
                         "gatewayMessage": {
                           "type": "string",
-                          "example": "Awaiting customer approval",
-                          "description": "Human-readable form of gatewayCode. Wording may change; do not parse it."
+                          "example": "APPROVED",
+                          "description": "The provider's own response word, passed through unchanged: ACCEPTED, APPROVED or DECLINED."
+                        },
+                        "gatewayCode": {
+                          "type": "string",
+                          "example": "Merchant credited",
+                          "description": "What the gatewayMessage means, in plain words: ACCEPTED -> Awaiting customer approval, APPROVED -> Merchant credited, DECLINED -> Payment declined. Null for anything else."
                         }
                       }
                     }
