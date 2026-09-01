@@ -67,7 +67,7 @@ curl --request GET \
   | Value | Description |
   |---|---|
   | `PENDING` | Payment prompt sent; awaiting the customer's action. |
-  | `APPROVED` | The charge was approved on the mobile money network. |
+  | `APPROVED` | The charge was approved on the customer's mobile money network. |
   | `SUCCESS` | The collection completed. |
   | `FAILED` | The collection did not complete. |
   | `PENDING_APPROVAL` | No outcome was returned within the polling window, so the collection is unresolved. It can still settle later. |
@@ -82,11 +82,11 @@ curl --request GET \
 </ResponseField>
 
 <ResponseField name="vendor" type="string">
-  The mobile money network the collection was requested on, echoing the `topupVendor` you sent.
+  The customer's mobile money network, echoing the `topupVendor` you sent.
 </ResponseField>
 
 <ResponseField name="gatewayMessage" type="string">
-  The mobile money network's response word for this collection.
+  The response from the customer's mobile money network.
 </ResponseField>
 
 <ResponseField name="gatewayCode" type="string">
