@@ -14987,13 +14987,15 @@
                         },
                         "status": {
                           "type": "string",
-                          "example": "APPROVED",
+                          "example": "PENDING",
                           "enum": [
                             "PENDING",
                             "APPROVED",
+                            "SUCCESS",
                             "FAILED",
-                            "CANCELLED"
-                          ]
+                            "PENDING_APPROVAL"
+                          ],
+                          "description": "Current status of the collection. PENDING_APPROVAL means the provider returned no outcome within the polling window and the collection is unresolved."
                         },
                         "amount": {
                           "type": "number",
@@ -15002,6 +15004,21 @@
                         "currency": {
                           "type": "string",
                           "example": "CDF"
+                        },
+                        "vendor": {
+                          "type": "string",
+                          "example": "MPESA",
+                          "description": "The mobile money network the collection was requested on, echoing the topupVendor sent."
+                        },
+                        "gatewayMessage": {
+                          "type": "string",
+                          "example": "APPROVED",
+                          "description": "The provider's own response word, passed through unchanged: ACCEPTED, APPROVED or DECLINED."
+                        },
+                        "gatewayCode": {
+                          "type": "string",
+                          "example": "Merchant credited",
+                          "description": "What the gatewayMessage means, in plain words: ACCEPTED -> Awaiting customer approval, APPROVED -> Merchant credited, DECLINED -> Payment declined. Null for anything else."
                         }
                       }
                     }
