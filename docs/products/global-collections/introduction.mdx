@@ -63,7 +63,8 @@ If you want a hosted payment experience instead of a direct collection API, use 
 A collection is initiated as `PENDING` and settles asynchronously, because the customer still has to
 approve the charge on their phone. Two fields tell you where it stands.
 
-`gatewayMessage` is the provider's own word. `gatewayCode` says what it means:
+`gatewayMessage` is the response from the customer's mobile money network. `gatewayCode` says
+what it means:
 
 | `gatewayMessage` | `gatewayCode` |
 |---|---|
